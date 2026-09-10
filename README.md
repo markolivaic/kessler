@@ -225,6 +225,11 @@ value unpacking, so it raised on every object that reached it. The sweep caught 
 exception and counted those as skips, so the objects that needed the fallback were
 exactly the ones excluded from the measurement. Fixing it moved 211 crashes to 0.
 
+The browser side is plain TypeScript on Vite with three.js and satellite.js. No
+framework: one route, one canvas, and a clock that drives every panel. Putting a
+reconciler between the propagator and the renderer would cost a frame budget it
+cannot repay.
+
 ## Quick start
 
 Needs Python 3.11+ and Node 22+. No API key. No account. The snapshot is in the repo, so

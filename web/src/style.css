@@ -1,0 +1,594 @@
+/*
+ * The globe is the page.
+ *
+ * Everything here is an overlay on a full-bleed canvas: no permanent column, no
+ * banner across the top, no flex column of stacked rows. Identity and search sit in
+ * one corner, the source note and legend in another, the clock along the bottom
+ * edge, and an object's record appears only once something is selected.
+ *
+ * The first version was a two row header over a fixed left record column beside a
+ * visual panel. That is the same skeleton as the previous project in this portfolio,
+ * and two repositories that differ only in typeface and content read as one template
+ * used twice. See the second correction in docs/design.md.
+ *
+ * Nothing is positioned with calc(100vh - Npx) against a hand-counted header height.
+ * The stage is the viewport and the overlays are anchored to its edges.
+ */
+
+@import "@fontsource/atkinson-hyperlegible/400.css";
+@import "@fontsource/atkinson-hyperlegible/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+
+:root {
+  --ground: #0d1014;
+  --veil: rgba(13, 16, 20, 0.82);
+  --edge: rgba(220, 225, 232, 0.13);
+  --text: #dce1e8;
+  --dim: #8a93a0;
+  --payload: #93b7e3;
+  --debris: #b08050;
+  --selected: #ffffff;
+  --partner: #f2b441;
+  --after: #4fd1c5;
+
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --text-face: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+}
+
+/*
+ * The pale ground. Not a test artefact: the legibility criterion in docs/design.md
+ * passed it, and it stays a real design reachable from the toggle. The dark one is
+ * the default for a reason that criterion never covered, which is stated there.
+ */
+:root[data-ground="light"] {
+  --ground: #eeece7;
+  --veil: rgba(238, 236, 231, 0.86);
+  --edge: rgba(35, 38, 42, 0.16);
+  --text: #23262a;
+  --dim: #5f636a;
+  --payload: #2f7fd0;
+  --debris: #8a5410;
+  --selected: #111418;
+  --partner: #c2185b;
+  --after: #00838f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--text-face);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app,
+.stage {
+  position: fixed;
+  inset: 0;
+}
+
+.globe {
+  position: absolute;
+  inset: 0;
+}
+
+.globe canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- corner: identity and finding something ---- */
+
+.mark {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  width: 300px;
+  z-index: 3;
+}
+
+.mark h1 {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.mark p {
+  margin: 2px 0 12px;
+  font-size: 11.5px;
+  color: var(--dim);
+  max-width: 25ch;
+  line-height: 1.35;
+}
+
+.finder-input {
+  width: 100%;
+  background: var(--veil);
+  border: 1px solid var(--edge);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 2px;
+  backdrop-filter: none;
+}
+
+.finder-input::placeholder {
+  color: var(--dim);
+}
+
+.finder-input:focus {
+  outline: none;
+  border-color: var(--partner);
+}
+
+.finder-results {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--veil);
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  display: none;
+}
+
+.finder-results.open {
+  display: block;
+}
+
+.finder-results li {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 5px 9px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.finder-results li:hover {
+  background: var(--edge);
+}
+
+.finder-results .id,
+.finder-results .nothing {
+  color: var(--dim);
+}
+
+.finder-results .nothing {
+  cursor: default;
+}
+
+/* ---- corner: the ground toggle ---- */
+
+.ground-toggle {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  z-index: 4;
+  background: var(--veil);
+  border: 1px solid var(--edge);
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.ground-toggle:hover {
+  color: var(--text);
+  border-color: var(--partner);
+}
+
+/* ---- the record, which only exists once something is selected ---- */
+
+.card {
+  position: absolute;
+  top: 62px;
+  right: 24px;
+  width: 348px;
+  max-height: calc(100% - 250px);
+  overflow-y: auto;
+  z-index: 3;
+  background: var(--veil);
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  padding: 14px 16px 18px;
+}
+
+.card[hidden] {
+  display: none;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.card-head h2 {
+  font-size: 16px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.card-head .sub {
+  margin: 2px 0 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--dim);
+}
+
+.close {
+  background: none;
+  border: none;
+  color: var(--dim);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.close:hover {
+  color: var(--partner);
+}
+
+.card h3 {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin: 16px 0 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--edge);
+  display: flex;
+  justify-content: space-between;
+}
+
+.card h3 .count {
+  color: var(--partner);
+}
+
+.record .kv {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 1.5px 0;
+}
+
+.record .k {
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.record .v {
+  text-align: right;
+  word-break: break-word;
+}
+
+.passages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.passages li {
+  padding: 6px 8px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1px 8px;
+  border-left: 2px solid transparent;
+  font-family: var(--mono);
+  font-size: 11.5px;
+}
+
+.passages li:hover {
+  background: var(--edge);
+}
+
+.passages li[aria-current="true"] {
+  background: var(--edge);
+  border-left-color: var(--partner);
+}
+
+.passages .who {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.passages .miss {
+  color: var(--partner);
+  text-align: right;
+}
+
+.passages .when {
+  grid-column: 1 / -1;
+  color: var(--dim);
+  font-size: 10.5px;
+}
+
+.chip {
+  font-style: normal;
+  font-size: 9.5px;
+  color: var(--debris);
+  border: 1px solid var(--edge);
+  padding: 0 4px;
+  margin-left: 6px;
+}
+
+.none,
+.hint,
+.filtered {
+  font-size: 11px;
+  color: var(--dim);
+  line-height: 1.4;
+  margin: 6px 0 0;
+}
+
+.filtered,
+.warn {
+  color: var(--partner);
+}
+
+.control label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--dim);
+  margin: 10px 0 3px;
+}
+
+.control label b {
+  color: var(--after);
+  font-weight: 400;
+}
+
+.control input[type="range"] {
+  width: 100%;
+  accent-color: var(--after);
+  background: transparent;
+}
+
+.outcome {
+  margin-top: 10px;
+  border-top: 1px solid var(--edge);
+  padding-top: 8px;
+}
+
+.outcome .outcome .delta {
+  font-family: var(--mono);
+  font-size: 20px;
+  color: var(--after);
+  margin: 0;
+}
+
+.outcome .delta.small {
+  font-size: 13px;
+  color: var(--dim);
+}
+
+/* ---- corner: source note and legend ---- */
+
+.marginalia {
+  position: absolute;
+  left: 0;
+  bottom: 76px;
+  width: 400px;
+  padding: 0 24px 28px;
+  z-index: 2;
+  pointer-events: none;
+  /* A soft scrim, not a panel. Without it the point field reads straight through
+     the source note and the small type looks like it has dirt on it. A hard edged
+     box here would put a column back on the left, which is the thing being undone. */
+  background: linear-gradient(
+    to top,
+    var(--ground) 0%,
+    color-mix(in srgb, var(--ground) 82%, transparent) 55%,
+    transparent 100%
+  );
+}
+
+.facts {
+  margin: 0 0 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+}
+
+.facts div {
+  display: flex;
+  gap: 8px;
+}
+
+.facts dt {
+  color: var(--dim);
+  width: 76px;
+  flex: none;
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.key {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+}
+
+.key li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dot,
+.ring {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.pay {
+  background: var(--payload);
+}
+
+.dot.deb {
+  background: var(--debris);
+}
+
+.ring.sel {
+  border: 2px solid var(--selected);
+}
+
+.ring.par {
+  border: 2px solid var(--partner);
+}
+
+.disclosure {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--dim);
+  max-width: 40ch;
+}
+
+.disclosure b {
+  color: var(--partner);
+  font-weight: 400;
+}
+
+.loading {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+}
+
+/* ---- the approach, docked above the clock and only while one is open ---- */
+
+.approach {
+  position: absolute;
+  /* Three zones along the bottom and they must not sit on each other: the source
+     note on the left, this in the middle, the record down the right. Anchoring this
+     to the right edge put the curve underneath the card, which is where its own
+     axis labels went to hide. The card is always present when this is, because an
+     approach implies a selection, so reserving its width here is safe. */
+  left: 440px;
+  right: 396px;
+  bottom: 96px;
+  z-index: 2;
+  background: var(--veil);
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  padding: 8px 10px 4px;
+}
+
+.approach[hidden] {
+  display: none;
+}
+
+.approach-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--dim);
+  margin-bottom: 4px;
+}
+
+.approach-head .pair {
+  color: var(--text);
+}
+
+.approach-head .pair b {
+  color: var(--partner);
+  font-weight: 400;
+}
+
+.approach canvas {
+  display: block;
+  width: 100%;
+  height: 150px;
+  cursor: crosshair;
+}
+
+/* ---- the clock along the bottom edge ---- */
+
+.clock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  background: var(--veil);
+  border-top: 1px solid var(--edge);
+}
+
+.clock canvas {
+  display: block;
+  width: 100%;
+  height: 76px;
+  cursor: ew-resize;
+}
+
+/* ---- narrow windows: the card becomes a sheet rather than a floating panel ---- */
+
+@media (max-width: 1180px) {
+  .mark {
+    width: calc(100% - 48px);
+    max-width: 300px;
+  }
+
+  .card {
+    top: auto;
+    bottom: 84px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: 52%;
+  }
+
+  .approach {
+    display: none;
+  }
+
+  .marginalia {
+    display: none;
+  }
+}

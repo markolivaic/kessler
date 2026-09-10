@@ -1,0 +1,59 @@
+{
+  "generated_utc": "2026-08-18T19:35:13+00:00",
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
+    "python": "3.12.1",
+    "numpy": "2.5.2"
+  },
+  "snapshot": "2026-08-17",
+  "objects": 18984,
+  "repeats": 5,
+  "sgp4": {
+    "steps": 200,
+    "state_vectors": 3796800,
+    "seconds": 1.6103,
+    "state_vectors_per_second": 2357791
+  },
+  "neighbour_search": {
+    "points": 18983,
+    "gate_km": 134.63,
+    "build_ms": 3.908,
+    "query_ms": 13.023,
+    "pairs_returned": 8468
+  },
+  "shell_sieve": {
+    "ISS (ZARYA)": {
+      "survivors": 535,
+      "of": 18984,
+      "kept_percent": 2.8
+    },
+    "STARLINK-30273": {
+      "survivors": 9283,
+      "of": 18984,
+      "kept_percent": 48.9
+    },
+    "FENGYUN 1C DEB": {
+      "survivors": 3176,
+      "of": 18984,
+      "kept_percent": 16.7
+    },
+    "EXPRESS-AMU1": {
+      "survivors": 601,
+      "of": 18984,
+      "kept_percent": 3.2
+    }
+  },
+  "sgp4_inversion": {
+    "objects": 18983,
+    "burn": "zero delta-v, so the residual is the accuracy floor of the manoeuvre",
+    "residual_m_median": 9.1386116338799e-08,
+    "residual_m_p99": 9.734042742677195e-07,
+    "residual_m_max": 1460.5494581097587,
+    "under_1_micron_percent": 99.9473,
+    "did_not_converge": 10,
+    "refused_by_sgp4": 1,
+    "ms_median": 0.923
+  },
+  "projected_full_day_screening_seconds": 215.9
+}

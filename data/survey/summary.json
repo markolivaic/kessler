@@ -1,0 +1,328 @@
+{
+  "generated_utc": "2026-08-18T10:01:59+00:00",
+  "machine": "Windows AMD64, Python 3.12.1",
+  "snapshot": "2026-08-17",
+  "command": "python scripts/survey_conjunctions.py --hours 24 --step 10 --threshold 25",
+  "window": {
+    "start_utc": "2026-08-17T00:00:00+00:00",
+    "hours": 24.0,
+    "step_seconds": 10.0,
+    "steps": 8641
+  },
+  "catalogue": {
+    "objects_parsed": 18984,
+    "objects_usable": 18983,
+    "objects_refused_by_sgp4": [
+      "STARLINK-38129"
+    ],
+    "objects_by_group": {
+      "active": 16344,
+      "fengyun-1c-debris": 1935,
+      "cosmos-2251-debris": 591,
+      "iridium-33-debris": 111,
+      "cosmos-1408-debris": 3
+    }
+  },
+  "coverage": {
+    "denominator": "CelesTrak SATCAT rows with a blank DECAY_DATE, i.e. still on orbit",
+    "on_orbit_catalogued": 34819,
+    "screened": 18984,
+    "screened_percent": 54.5,
+    "debris_on_orbit": 12497,
+    "debris_screened": 2637,
+    "debris_percent": 21.1,
+    "by_object_type": {
+      "PAY": {
+        "on_orbit": 19847,
+        "screened": 16345,
+        "percent": 82.4
+      },
+      "R/B": {
+        "on_orbit": 2421,
+        "screened": 2,
+        "percent": 0.1
+      },
+      "DEB": {
+        "on_orbit": 12497,
+        "screened": 2637,
+        "percent": 21.1
+      },
+      "UNK": {
+        "on_orbit": 54,
+        "screened": 0,
+        "percent": 0.0
+      }
+    },
+    "objects_without_a_satcat_row": 0
+  },
+  "screening": {
+    "threshold_km": 25.0,
+    "gate_km": 134.625,
+    "max_orbital_speed_kms": 10.9625,
+    "detections": 3661567,
+    "encounters_before_filter": 1632184,
+    "state_vectors": 164032103
+  },
+  "artefact_filter": {
+    "encounters_in_range_before_filter": 1527009,
+    "shared_element_set": {
+      "rule": "both entries carry the same element set, so this is one tracked object published twice, usually a station and a vehicle docked to it",
+      "removed": 66,
+      "example_pairs": [
+        "ISS (ZARYA) / ISS (UNITY)",
+        "ISS (ZARYA) / ISS (ZVEZDA)",
+        "ISS (ZARYA) / ISS (DESTINY)",
+        "ISS (ZARYA) / POISK",
+        "ISS (ZARYA) / ISS (NAUKA)",
+        "ISS (ZARYA) / CREW DRAGON 12",
+        "ISS (ZARYA) / PROGRESS-MS 33",
+        "ISS (ZARYA) / CYGNUS NG-24"
+      ]
+    },
+    "co_orbiting": {
+      "rule": "relative speed at closest approach below 0.05 km/s. These pairs fly together on purpose and never separate, so there is no time of closest approach and no manoeuvre decision",
+      "removed": 1080,
+      "example_pairs": [
+        "TIANHUI 2-02A / TIANHUI 2-02B (0.16 km, 0.8 m/s)",
+        "TIANHUI 2-01A / TIANHUI 2-01B (0.16 km, 0.4 m/s)",
+        "TIANHUI 5C / TIANHUI 5D (0.43 km, 1.1 m/s)",
+        "STARLINK-37844 / STARLINK-37756 (0.50 km, 2.2 m/s)",
+        "VEGAFLY-1 / DISCO-2 (0.56 km, 25.2 m/s)",
+        "SUPERVIEW NEO-2 03 / SUPERVIEW NEO-2 04 (0.56 km, 1.3 m/s)",
+        "PIESAT A / PIESAT D (0.58 km, 1.4 m/s)",
+        "TIANHUI 5A / TIANHUI 5B (0.83 km, 1.5 m/s)"
+      ]
+    },
+    "sensitivity_to_the_speed_floor": {
+      "0 km/s": {
+        "<=1km": 781,
+        "<=5km": 47537,
+        "<=10km": 235082,
+        "<=25km": 1526943
+      },
+      "0.01 km/s": {
+        "<=1km": 773,
+        "<=5km": 47500,
+        "<=10km": 234948,
+        "<=25km": 1526611
+      },
+      "0.05 km/s": {
+        "<=1km": 772,
+        "<=5km": 47457,
+        "<=10km": 234742,
+        "<=25km": 1525863
+      },
+      "0.1 km/s": {
+        "<=1km": 772,
+        "<=5km": 47437,
+        "<=10km": 234575,
+        "<=25km": 1525136
+      },
+      "0.2 km/s": {
+        "<=1km": 772,
+        "<=5km": 47398,
+        "<=10km": 234306,
+        "<=25km": 1523767
+      }
+    }
+  },
+  "result": {
+    "passages_within_threshold": 1525863,
+    "per_day": 1525863.0,
+    "cumulative_counts_km": {
+      "<=1": 772,
+      "<=5": 47457,
+      "<=10": 234742,
+      "<=25": 1525863
+    },
+    "per_day_by_threshold_km": {
+      "<=1": 772.0,
+      "<=5": 47457.0,
+      "<=10": 234742.0,
+      "<=25": 1525863.0
+    },
+    "histogram_1km_bins": {
+      "0-1": 772,
+      "1-2": 2447,
+      "2-3": 8465,
+      "3-4": 16119,
+      "4-5": 19654,
+      "5-6": 33207,
+      "6-7": 29804,
+      "7-8": 33669,
+      "8-9": 46870,
+      "9-10": 43735,
+      "10-11": 48654,
+      "11-12": 51947,
+      "12-13": 63119,
+      "13-14": 68984,
+      "14-15": 70226,
+      "15-16": 77634,
+      "16-17": 76905,
+      "17-18": 83137,
+      "18-19": 97882,
+      "19-20": 101798,
+      "20-21": 115074,
+      "21-22": 113712,
+      "22-23": 107750,
+      "23-24": 108163,
+      "24-25": 106136
+    },
+    "miss_distance_km": {
+      "min": 0.0104,
+      "p05": 5.859,
+      "median": 17.867,
+      "p95": 24.277,
+      "max": 25.0
+    },
+    "relative_speed_kms": {
+      "min": 0.05,
+      "median": 10.864,
+      "max": 15.478
+    },
+    "per_object_load_by_threshold_km": {
+      "<=1": {
+        "objects_involved": 1217,
+        "objects_with_none": 17766,
+        "fleet_mean_per_day": 0.081,
+        "involved_mean_per_day": 1.27,
+        "involved_median_per_day": 1.0,
+        "involved_p95_per_day": 3.0,
+        "involved_max_per_day": 8.0
+      },
+      "<=5": {
+        "objects_involved": 13509,
+        "objects_with_none": 5474,
+        "fleet_mean_per_day": 5.0,
+        "involved_mean_per_day": 7.03,
+        "involved_median_per_day": 3.0,
+        "involved_p95_per_day": 23.0,
+        "involved_max_per_day": 75.0
+      },
+      "<=10": {
+        "objects_involved": 17334,
+        "objects_with_none": 1649,
+        "fleet_mean_per_day": 24.732,
+        "involved_mean_per_day": 27.08,
+        "involved_median_per_day": 9.0,
+        "involved_p95_per_day": 96.0,
+        "involved_max_per_day": 182.0
+      },
+      "<=25": {
+        "objects_involved": 18104,
+        "objects_with_none": 879,
+        "fleet_mean_per_day": 160.761,
+        "involved_mean_per_day": 168.57,
+        "involved_median_per_day": 180.0,
+        "involved_p95_per_day": 458.0,
+        "involved_max_per_day": 678.0
+      }
+    },
+    "object_type_pairs_by_threshold_km": {
+      "<=1": {
+        "PAY-PAY": 682,
+        "DEB-PAY": 56,
+        "DEB-DEB": 33,
+        "PAY-R/B": 1
+      },
+      "<=5": {
+        "PAY-PAY": 45169,
+        "DEB-PAY": 1455,
+        "DEB-DEB": 818,
+        "PAY-R/B": 15
+      },
+      "<=10": {
+        "PAY-PAY": 225710,
+        "DEB-PAY": 5742,
+        "DEB-DEB": 3236,
+        "PAY-R/B": 54
+      },
+      "<=25": {
+        "PAY-PAY": 1469234,
+        "DEB-PAY": 35828,
+        "DEB-DEB": 20529,
+        "PAY-R/B": 263,
+        "DEB-R/B": 9
+      }
+    },
+    "closest_ten": [
+      {
+        "a": "ION SCV-004",
+        "b": "STARLINK-36519",
+        "miss_km": 0.0104,
+        "rel_speed_kms": 11.389,
+        "tca_utc": "2026-08-17T08:21:42.756+00:00"
+      },
+      {
+        "a": "STARLINK-1154",
+        "b": "STARLINK-11200 [DTC]",
+        "miss_km": 0.0498,
+        "rel_speed_kms": 10.964,
+        "tca_utc": "2026-08-17T09:38:29.020+00:00"
+      },
+      {
+        "a": "APRIZESAT 1",
+        "b": "IRIDIUM 161",
+        "miss_km": 0.0906,
+        "rel_speed_kms": 14.93,
+        "tca_utc": "2026-08-17T20:58:54.813+00:00"
+      },
+      {
+        "a": "TRANSPORTER-17 OBJECT J",
+        "b": "COSMOS 2251 DEB",
+        "miss_km": 0.0919,
+        "rel_speed_kms": 14.921,
+        "tca_utc": "2026-08-17T15:34:12.126+00:00"
+      },
+      {
+        "a": "STARLINK-30273",
+        "b": "STARLINK-34481",
+        "miss_km": 0.0966,
+        "rel_speed_kms": 12.21,
+        "tca_utc": "2026-08-17T23:52:39.259+00:00"
+      },
+      {
+        "a": "STARLINK-30602",
+        "b": "STARLINK-30766",
+        "miss_km": 0.0991,
+        "rel_speed_kms": 4.232,
+        "tca_utc": "2026-08-17T13:09:34.329+00:00"
+      },
+      {
+        "a": "STARLINK-30924",
+        "b": "STARLINK-11252 [DTC]",
+        "miss_km": 0.1012,
+        "rel_speed_kms": 11.434,
+        "tca_utc": "2026-08-17T00:50:40.974+00:00"
+      },
+      {
+        "a": "STARLINK-4106",
+        "b": "SCS-01 M",
+        "miss_km": 0.1039,
+        "rel_speed_kms": 13.982,
+        "tca_utc": "2026-08-17T08:49:13.257+00:00"
+      },
+      {
+        "a": "SITRO-AIS-64",
+        "b": "GUOWANG TEST OBJECT D",
+        "miss_km": 0.1076,
+        "rel_speed_kms": 14.78,
+        "tca_utc": "2026-08-17T02:47:12.807+00:00"
+      },
+      {
+        "a": "STARLINK-30895",
+        "b": "STARLINK-36423",
+        "miss_km": 0.1204,
+        "rel_speed_kms": 10.114,
+        "tca_utc": "2026-08-17T08:26:58.122+00:00"
+      }
+    ]
+  },
+  "timing_seconds": {
+    "screen_total": 395.17,
+    "screen_kdtree": 251.37,
+    "screen_propagate_and_filter": 143.8,
+    "refine": 456.81,
+    "note": "screen_propagate_and_filter is SGP4 plus the vectorised linear test plus array slicing, not SGP4 alone. scripts/benchmark.py times SGP4 on its own."
+  }
+}

@@ -1,0 +1,85 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Rot surfaces without a push: sgp4 releases, wheels move, a dependency shifts.
+  schedule:
+    - cron: "23 5 * * 1"
+
+jobs:
+  python:
+    # Linux, though development is on Windows. This is what catches
+    # .venv/Scripts against .venv/bin and backslash path assumptions.
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e "backend[dev]"
+
+      - name: Lint
+        run: ruff check backend scripts tests
+
+      - name: Format check
+        run: ruff format --check backend scripts tests
+
+      # Behavioural tests. The screening one rebuilds an independent reference and
+      # checks the fast path against it, so this is real work rather than a smoke test.
+      - name: Behavioural tests
+        run: pytest tests/unit -p no:warnings
+
+      # Honesty guards: the disclosures still exist, the numbers in the README still
+      # match the artefacts that produced them, no local path leaked into the docs.
+      - name: Integrity tests
+        run: pytest tests/integrity -p no:warnings
+
+      - name: Report counts separately
+        if: always()
+        run: |
+          echo "behavioural: $(pytest tests/unit --collect-only -q -p no:warnings | tail -1)"
+          echo "integrity:   $(pytest tests/integrity --collect-only -q -p no:warnings | tail -1)"
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      # ci, not install: the lockfile is the manifest, not a suggestion.
+      - name: Install
+        working-directory: web
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: web
+        run: npm run typecheck
+
+      # The palette rule is the honesty mechanism in the design, and the propagation
+      # tests are the part of the globe a browser would otherwise be the only witness
+      # to. On the last project a colour rule shipped that only ever wrote to a console
+      # no build read.
+      - name: Frontend tests
+        working-directory: web
+        run: npm test
+
+      # A build is not a test and is not counted as one. It is here because a broken
+      # import in the globe would otherwise only surface in a browser.
+      - name: Build
+        working-directory: web
+        run: npm run build

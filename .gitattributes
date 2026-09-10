@@ -1,0 +1,6 @@
+# The snapshot files are the upstream artefact and MANIFEST.json publishes a
+# SHA-256 for each one. CelesTrak serves CRLF, so any end-of-line normalisation
+# changes the bytes and breaks the published hash on a Linux checkout. Store
+# them exactly as they arrived.
+data/snapshots/**/*.csv -text
+data/snapshots/**/*.json -text
